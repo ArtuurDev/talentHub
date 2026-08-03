@@ -6,7 +6,11 @@ on:
     - main
     paths:
     - 'services/api-gateway/**'
-
+    
+permissions:
+  contents: write   
+  pull-requests: write 
+  issues: write
 
 jobs:
   build:

@@ -6,6 +6,11 @@ on:
     - main
     paths:
     - 'services/user-service/**'
+    
+permissions:
+  contents: write   
+  pull-requests: write 
+  issues: write
 
 jobs:
   build:
