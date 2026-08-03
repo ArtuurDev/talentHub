@@ -5,7 +5,7 @@ on:
     branches:
     - main
     paths:
-    - '.github/workflows/api-gateway/**'
+    - 'services/api-gateway/**'
 
 
 jobs:
@@ -25,6 +25,6 @@ jobs:
       - name: Semantic Release
         uses: cycjimmy/semantic-release-action@v6
         with: 
-          working_diretory: ./services/api-gateway
+          working_directory: ./services/api-gateway
         env:
           GITHUB_TOKEN: ${{secrets.GH_TOKEN}}

@@ -5,7 +5,7 @@ on:
     branches:
     - main
     paths:
-      - '.github/workflows/notification-service/**'
+      - 'services/notification-service/**'
 
 jobs:
   build:
@@ -23,6 +23,6 @@ jobs:
     - name: Semantic Release
       uses: cycjimmy/semantic-release-action@v6
       with: 
-        working_diretory: ./service/notification-service
+        working_directory: ./services/notification-service
       env: 
         GITHUB_TOKEN: ${{secrets.GH_TOKEN}}

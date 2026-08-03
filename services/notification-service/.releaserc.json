@@ -1,5 +1,5 @@
 {
-  "tagFormat": "api-gateway-v${version}",
+  "tagFormat": "notification-service-v${version}",
   "branches": [
     "main"
   ],

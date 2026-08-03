@@ -15,6 +15,29 @@ A lógica de decisão de novas versões é baseada no padrão de **Conventional 
 
 ---
 
+## 📝 Guia de Conventional Commits (Tipos e Significados)
+
+Para que o `semantic-release` funcione perfeitamente, o padrão de **Conventional Commits** deve ser seguido nos títulos dos commits. Veja abaixo a lista dos tipos de commits mais utilizados, suas traduções, significados e o impacto na versão:
+
+| Prefixo (Tipo) | Tradução | Significado / Uso | Impacto na Versão |
+| :--- | :--- | :--- | :--- |
+| **`feat`** (feature) | Funcionalidade | Adição de uma nova funcionalidade ao sistema. | **Minor** (ex: `0.1.0` $\rightarrow$ `0.2.0`) |
+| **`fix`** | Correção | Resolução de um bug ou erro no código. | **Patch** (ex: `0.1.0` $\rightarrow$ `0.1.1`) |
+| **`perf`** | Performance | Alteração de código que melhora o desempenho. | **Patch** |
+| **`chore`** | Tarefa rotineira | Mudanças que não modificam código de produção ou testes (ex: atualizar `.gitignore`, dependências, configurações gerais). | **Nenhum** |
+| **`ci`** | Integração Contínua | Alterações nos arquivos de configuração ou scripts de CI/CD (ex: workflows do GitHub, `.releaserc.json`). | **Nenhum** |
+| **`docs`** | Documentação | Alterações apenas na documentação do projeto (ex: arquivos `.md`). | **Nenhum** |
+| **`style`** | Estilo / Formatação | Mudanças de estilização e formatação do código que não afetam seu comportamento (espaços, aspas, ponto e vírgula). | **Nenhum** |
+| **`refactor`** | Refatoração | Alteração de código que não corrige bugs nem adiciona funcionalidades (reorganização para melhorar legibilidade/estrutura). | **Nenhum** |
+| **`test`** | Testes | Adição de testes ausentes ou correção de testes existentes. | **Nenhum** |
+| **`build`** | Construção | Alterações que afetam o sistema de build ou dependências externas (ex: npm, dockerfile). | **Nenhum** |
+
+### Mudanças Incompatíveis (BREAKING CHANGES)
+Qualquer tipo de commit acima que inclua uma exclamação após o tipo (ex: `feat!: ...`) ou a menção `BREAKING CHANGE:` no rodapé do commit significa que houve uma mudança incompatível com versões anteriores.
+*   **Impacto na versão:** **Major** (ex: `0.1.0` $\rightarrow$ `1.0.0`).
+
+---
+
 ## 🧪 Estrutura de Pre-Release (Ciclo de Desenvolvimento)
 
 Durante a fase de desenvolvimento inicial dos microserviços (ciclo `0.x.x`), as configurações de release devem suportar o lançamento de versões preliminares (pre-releases).

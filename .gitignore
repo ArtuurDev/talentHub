@@ -1,7 +1,11 @@
 /services/api-gateway/node_modules
-/services/api-gateway/node_modules/env
+/services/api-gateway/dist
+/services/api-gateway/.env
 /services/user-service/node_modules
-/services/user-service/node_modules/env
+/services/user-service/dist
+/services/user-service/node_modules
 /services/notification-service/node_modules
-/services/notification-service/node_modules/env
+/services/notification-service/dist
+/services/notification-service/node_modules/
+/services/notification-service/.env
 node_modules
