@@ -37,7 +37,7 @@ export class ProxyService {
     const service = servicesConfig[serviceName]
     const url = `${service.url}/${path}`
 
-    this.logger.log(`Realizando requisição no metodo ${method} para o servico ${servicesConfig}`)
+    this.logger.log(`Realizando requisição no metodo ${method} para o serviço ${servicesConfig}`)
 
     try {
       const finalHeaders = {
