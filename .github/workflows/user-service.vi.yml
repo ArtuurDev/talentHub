@@ -1,0 +1,29 @@
+name: Buld and Push
+
+on:
+  push:
+    branches:
+    - main
+    paths:
+    - '.github/workflows/user-service/**'
+
+jobs:
+  build:
+    name: Continuos Integration - User Service
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Semantic Release
+      uses: cycjimmy/semantic-release-action@v6
+      with: 
+        working_diretory: ./services/user-service
+      env:
+          GITHUB_TOKEN: ${{secrets.GH_TOKEN}}
