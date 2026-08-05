@@ -7,12 +7,55 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  app.use(helmet())
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"]
+      }
+    },
+    crossOriginResourcePolicy: false,
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true
+    }
+  }))
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || "*",
-    methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: (origin, callback) => {
+      const allowedOrigins = (
+        process.env.CORS_ORIGIN ??
+        'http://localhost:3000'
+      )
+      .split(',')
+      .map(item => item.trim())
+      .filter(Boolean)
+
+      if (!origin) {
+        return callback(null, true)
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true)
+      }
+
+      return callback(new Error(`Origin ${origin} not allowed by CORS`), false)
+    },
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'Accept',-
+        'Origin',
+        'Access-Control-Request-Method',
+        'Access-Control-Request-Headers',
+      ],
+      credentials: true,
+      maxAge: 86400, // 24 hours
   })
 
   app.useGlobalPipes(
