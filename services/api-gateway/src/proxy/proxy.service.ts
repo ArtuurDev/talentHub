@@ -5,7 +5,7 @@ import { firstValueFrom } from 'rxjs';
 
 export interface UserInfo {
   userId: string
-  role: string
+  sessionId: string
 }
 
 export interface ProxyRequestParams {
@@ -13,7 +13,7 @@ export interface ProxyRequestParams {
   headers?: any
   path: string
   data?: any
-  userInfo: UserInfo,
+  userInfo?: UserInfo,
   method: string
 }
 
@@ -42,8 +42,8 @@ export class ProxyService {
     try {
       const finalHeaders = {
         ...headers,
-        'x-user-id': userInfo.userId,
-        'x-user-role': userInfo.role
+        'x-user-id': userInfo ? userInfo.userId : null,
+        'x-session-id': userInfo ? userInfo.sessionId : null,
       }
 
       const response = await firstValueFrom(
@@ -78,7 +78,7 @@ export class ProxyService {
       );
 
       return { status: 'healthy', data: response.data }
-    } catch (error) {
+    } catch (error: any) {
       return { status: 'unhealthy', error: error.message }
     }
   }
