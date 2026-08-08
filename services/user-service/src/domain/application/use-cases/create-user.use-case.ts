@@ -1,7 +1,7 @@
 import { ConflictError } from "../../../core/errors/create-user.error"
 import { InvalidEmailError } from "../../../core/errors/invalid-email.error"
+import { HashGenerator } from '../../../cryptography/hash-generator'
 import { User, UserType } from "../../enterprise/entities/user"
-import { CryptograpyRepository } from "../cryptograpy/cryptograpy-repository"
 import { UsersRepository } from "../repositories/users-repository"
 
 export interface CreateUserUseCaseRequest {
@@ -18,7 +18,7 @@ export type CreateUserUseCaseResponseSuccess = {message: string}
 export class CreateUserUseCase {
   constructor(
     private usersRepository: UsersRepository,
-    private cryptograpyRepository: CryptograpyRepository
+    private hashGenerator: HashGenerator
   ) {}
 
   async execute({
@@ -34,7 +34,7 @@ export class CreateUserUseCase {
       return new ConflictError('Esse E-mail já existe')
     }
 
-    const passwordHash = await this.cryptograpyRepository.hash(password, 8)
+    const passwordHash = await this.hashGenerator.hash(password)
     const userInstance = User.create({
       email,
       name,

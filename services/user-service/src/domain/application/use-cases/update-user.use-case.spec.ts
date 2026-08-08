@@ -3,18 +3,18 @@ import { ConflictError } from '../../../core/errors/create-user.error'
 import { InvalidEmailError } from '../../../core/errors/invalid-email.error'
 import { UserNotFoundError } from '../../../core/errors/user-not-found.error'
 import { User, UserType } from '../../enterprise/entities/user'
-import { InMemoryEncryptRepository } from '../../../test/cryptograpy/in-memory-encrypt-repository'
+import { FakeHasher } from '../../../test/cryptography/fake-hasher'
 import { InMemoryUsersRepository } from '../../../test/repositories/in-memory-users-repository'
 import { UpdateUserUseCase } from './update-user.use-case'
 
 describe('UpdateUserUseCase', () => {
   it('updates the supplied user fields and encrypts a new password', async () => {
     const usersRepository = new InMemoryUsersRepository()
-    const sut = new UpdateUserUseCase(usersRepository, new InMemoryEncryptRepository())
+    const sut = new UpdateUserUseCase(usersRepository, new FakeHasher())
     const user = User.create({
       name: 'Jane Doe',
       email: 'jane@example.com',
-      password: 'old-password-encrypt',
+      password: 'old-password-hashed',
       userType: UserType.TALENT,
     }) as User
 
@@ -30,7 +30,7 @@ describe('UpdateUserUseCase', () => {
     expect(usersRepository.items[0]).toMatchObject({
       name: 'Jane Smith',
       email: 'jane@example.com',
-      password: 'new-password-encrypt',
+      password: 'new-password-hashed',
       userType: UserType.RECRUITER,
     })
     expect(usersRepository.items[0].updatedAt).toBeInstanceOf(Date)
@@ -38,17 +38,17 @@ describe('UpdateUserUseCase', () => {
 
   it('does not update to an e-mail that belongs to another user', async () => {
     const usersRepository = new InMemoryUsersRepository()
-    const sut = new UpdateUserUseCase(usersRepository, new InMemoryEncryptRepository())
+    const sut = new UpdateUserUseCase(usersRepository, new FakeHasher())
     const user = User.create({
       name: 'Jane Doe',
       email: 'jane@example.com',
-      password: 'password-encrypt',
+      password: 'password-hashed',
       userType: UserType.TALENT,
     }) as User
     const otherUser = User.create({
       name: 'John Doe',
       email: 'john@example.com',
-      password: 'password-encrypt',
+      password: 'password-hashed',
       userType: UserType.TALENT,
     }) as User
 
@@ -61,11 +61,11 @@ describe('UpdateUserUseCase', () => {
 
   it('returns an invalid e-mail error without updating the user', async () => {
     const usersRepository = new InMemoryUsersRepository()
-    const sut = new UpdateUserUseCase(usersRepository, new InMemoryEncryptRepository())
+    const sut = new UpdateUserUseCase(usersRepository, new FakeHasher())
     const user = User.create({
       name: 'Jane Doe',
       email: 'jane@example.com',
-      password: 'password-encrypt',
+      password: 'password-hashed',
       userType: UserType.TALENT,
     }) as User
 
@@ -76,7 +76,7 @@ describe('UpdateUserUseCase', () => {
   })
 
   it('returns an error when the user does not exist', async () => {
-    const sut = new UpdateUserUseCase(new InMemoryUsersRepository(), new InMemoryEncryptRepository())
+    const sut = new UpdateUserUseCase(new InMemoryUsersRepository(), new FakeHasher())
 
     await expect(sut.execute({ userId: 'missing-user-id', name: 'Jane Doe' })).resolves.toBeInstanceOf(UserNotFoundError)
   })

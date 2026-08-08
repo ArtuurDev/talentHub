@@ -1,7 +1,7 @@
 import { InvalidCredentialsError } from '../../../core/errors/invalid-credentials.error'
+import { Encrypter } from '../../../cryptography/encrypter'
+import { HashComparer } from '../../../cryptography/hash-comparer'
 import { UserType } from '../../enterprise/entities/user'
-import { CryptograpyRepository } from '../cryptograpy/cryptograpy-repository'
-import { JwtRepository } from '../jwt/jwt-repository'
 import { UsersRepository } from '../repositories/users-repository'
 
 export interface LoginUserUseCaseRequest {
@@ -9,13 +9,13 @@ export interface LoginUserUseCaseRequest {
   password: string
 }
 
-export type LoginUserUseCaseResponse = { accessToken: string } | InvalidCredentialsError
+export type LoginUserUseCaseResponse = { accessToken: string; refreshToken: string } | InvalidCredentialsError
 
 export class LoginUserUseCase {
   constructor(
     private usersRepository: UsersRepository,
-    private cryptograpyRepository: CryptograpyRepository,
-    private jwtRepository: JwtRepository,
+    private hashComparer: HashComparer,
+    private encrypter: Encrypter,
   ) {}
 
   async execute({ email, password }: LoginUserUseCaseRequest): Promise<LoginUserUseCaseResponse> {
@@ -25,18 +25,22 @@ export class LoginUserUseCase {
       return new InvalidCredentialsError()
     }
 
-    const passwordMatches = await this.cryptograpyRepository.compare(user.password, password)
+    const passwordMatches = await this.hashComparer.compare(password, user.password)
 
     if (!passwordMatches) {
       return new InvalidCredentialsError()
     }
 
-    const accessToken = await this.jwtRepository.sign({
+    const payload = {
       sub: user.id.toString(),
       email: user.email,
       userType: UserType[user.userType],
-    })
+    }
+    const [accessToken, refreshToken] = await Promise.all([
+      this.encrypter.encrypt({ ...payload, tokenType: 'access' }, { expiresIn: '15m' }),
+      this.encrypter.encrypt({ ...payload, tokenType: 'refresh' }, { expiresIn: '7d' }),
+    ])
 
-    return { accessToken }
+    return { accessToken, refreshToken }
   }
 }
