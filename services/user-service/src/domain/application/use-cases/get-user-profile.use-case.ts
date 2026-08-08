@@ -10,7 +10,7 @@ export interface UserProfile {
   id: string
   name: string
   email: string
-  userType: keyof typeof UserType
+  userType: string
   createdAt: Date
   updatedAt?: Date | null
 }
