@@ -47,6 +47,8 @@ export class CreateUserUseCase {
       return userInstance
     }
 
+    await this.usersRepository.create(userInstance)
+
     return {
       message: 'Usuário criado com sucesso'
     }
