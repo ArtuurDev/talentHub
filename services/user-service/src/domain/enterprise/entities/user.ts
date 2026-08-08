@@ -39,7 +39,7 @@ export class User extends AggregateRoot<UserProps> {
   }
 
   get userType() {
-    return this.userType
+    return this.props.userType
   }
 
   get createdAt() {
@@ -47,7 +47,7 @@ export class User extends AggregateRoot<UserProps> {
   }
 
   get updatedAt() {
-    return this.updatedAt
+    return this.props.updatedAt
   }
 
 
