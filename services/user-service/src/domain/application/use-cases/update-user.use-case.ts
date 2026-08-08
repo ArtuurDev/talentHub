@@ -1,8 +1,8 @@
 import { ConflictError } from '../../../core/errors/create-user.error'
 import { InvalidEmailError } from '../../../core/errors/invalid-email.error'
 import { UserNotFoundError } from '../../../core/errors/user-not-found.error'
+import { HashGenerator } from '../../../cryptography/hash-generator'
 import { User, UserType } from '../../enterprise/entities/user'
-import { CryptograpyRepository } from '../cryptograpy/cryptograpy-repository'
 import { UsersRepository } from '../repositories/users-repository'
 
 export interface UpdateUserUseCaseRequest {
@@ -22,7 +22,7 @@ export type UpdateUserUseCaseResponse =
 export class UpdateUserUseCase {
   constructor(
     private usersRepository: UsersRepository,
-    private cryptograpyRepository: CryptograpyRepository,
+    private hashGenerator: HashGenerator,
   ) {}
 
   async execute({ userId, name, email, password, userType }: UpdateUserUseCaseRequest): Promise<UpdateUserUseCaseResponse> {
@@ -33,7 +33,7 @@ export class UpdateUserUseCase {
     }
 
     const passwordHash = password
-      ? await this.cryptograpyRepository.hash(password, 8)
+      ? await this.hashGenerator.hash(password)
       : user.password
     const userInstance = User.create({
       name: name ?? user.name,

@@ -1,19 +1,19 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { ConflictError } from '../../../core/errors/create-user.error'
 import { InvalidEmailError } from '../../../core/errors/invalid-email.error'
-import { InMemoryEncryptRepository } from '../../../test/cryptograpy/in-memory-encrypt-repository'
+import { FakeHasher } from '../../../test/cryptography/fake-hasher'
 import { InMemoryUsersRepository } from '../../../test/repositories/in-memory-users-repository'
 import { CreateUserUseCase } from './create-user.use-case'
 
 describe('CreateUserUseCase', () => {
   let usersRepository: InMemoryUsersRepository
-  let cryptograpyRepository: InMemoryEncryptRepository
+  let hashGenerator: FakeHasher
   let sut: CreateUserUseCase
 
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
-    cryptograpyRepository = new InMemoryEncryptRepository()
-    sut = new CreateUserUseCase(usersRepository, cryptograpyRepository)
+    hashGenerator = new FakeHasher()
+    sut = new CreateUserUseCase(usersRepository, hashGenerator)
   })
 
   it('Deve ser possivel criar um usuário', async () => {
@@ -29,7 +29,7 @@ describe('CreateUserUseCase', () => {
     expect(usersRepository.items[0]).toMatchObject({
       name: 'user',
       email: 'user@example.com',
-      password: 'password-encrypt',
+      password: 'password-hashed',
     })
   })
 
