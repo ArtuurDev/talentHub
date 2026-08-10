@@ -1,3 +1,10 @@
+# [0.3.0](https://github.com/ArtuurDev/talentHub/compare/user-service-v0.2.0...user-service-v0.3.0) (2026-08-10)
+
+
+### Features
+
+* **user-service:** implementar sessões com refresh token ([07193c8](https://github.com/ArtuurDev/talentHub/commit/07193c83c2ecba8b6d284b0437553ac1ba40cb62))
+
 # [0.2.0](https://github.com/ArtuurDev/talentHub/compare/user-service-v0.1.0...user-service-v0.2.0) (2026-08-10)
 
 
