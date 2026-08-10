@@ -1,3 +1,4 @@
+import { Inject, Injectable } from '@nestjs/common'
 import { InvalidCredentialsError } from '../../../core/errors/invalid-credentials.error'
 import { Encrypter } from '../../../cryptography/encrypter'
 import { HashComparer } from '../../../cryptography/hash-comparer'
@@ -11,6 +12,7 @@ export interface LoginUserUseCaseRequest {
 
 export type LoginUserUseCaseResponse = { accessToken: string; refreshToken: string } | InvalidCredentialsError
 
+@Injectable()
 export class LoginUserUseCase {
   constructor(
     private usersRepository: UsersRepository,

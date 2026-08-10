@@ -28,39 +28,12 @@ import { UpdateUserController } from './controllers/update-user.controller'
   ],
   providers: [
     PrismaService,
-    PrismaUsersRepository,
-    { provide: UserRepository, useExisting: PrismaUsersRepository },
-    {
-      provide: CreateUserUseCase,
-      inject: [UserRepository, HashGenerator],
-      useFactory: (usersRepository: UserRepository, hashGenerator: HashGenerator) =>
-        new CreateUserUseCase(usersRepository, hashGenerator),
-    },
-    {
-      provide: GetUserProfileUseCase,
-      inject: [UserRepository],
-      useFactory: (usersRepository: UserRepository) => new GetUserProfileUseCase(usersRepository),
-    },
-    {
-      provide: LoginUserUseCase,
-      inject: [UserRepository, HashComparer, Encrypter],
-      useFactory: (
-        usersRepository: UserRepository,
-        hashComparer: HashComparer,
-        encrypter: Encrypter,
-      ) => new LoginUserUseCase(usersRepository, hashComparer, encrypter),
-    },
-    {
-      provide: UpdateUserUseCase,
-      inject: [UserRepository, HashGenerator],
-      useFactory: (usersRepository: UserRepository, hashGenerator: HashGenerator) =>
-        new UpdateUserUseCase(usersRepository, hashGenerator),
-    },
-    {
-      provide: DeleteUserUseCase,
-      inject: [UserRepository],
-      useFactory: (usersRepository: UserRepository) => new DeleteUserUseCase(usersRepository),
-    },
+    { provide: UserRepository, useClass: PrismaUsersRepository },
+    CreateUserUseCase,
+    GetUserProfileUseCase,
+    LoginUserUseCase,
+    UpdateUserUseCase,
+    DeleteUserUseCase,
   ],
 })
 export class UserModule {}

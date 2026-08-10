@@ -1,3 +1,4 @@
+import { Inject, Injectable } from '@nestjs/common'
 import { UserNotFoundError } from '../../../core/errors/user-not-found.error'
 import { UserType } from '../../enterprise/entities/user'
 import { UsersRepository } from '../repositories/users-repository'
@@ -15,6 +16,7 @@ export interface UserProfile {
   updatedAt?: Date | null
 }
 
+@Injectable()
 export class GetUserProfileUseCase {
   constructor(private usersRepository: UsersRepository) {}
 
