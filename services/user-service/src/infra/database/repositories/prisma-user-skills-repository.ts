@@ -29,6 +29,15 @@ export class PrismaUserSkillsRepository implements UserSkillsRepository {
     return userSkill ? PrismaUserSkillMapper.toDomain(userSkill) : null
   }
 
+  async findManyByUserId(userId: string): Promise<UserSkill[]> {
+    const userSkills = await this.prisma.userSkill.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'asc' },
+    })
+
+    return userSkills.map(PrismaUserSkillMapper.toDomain)
+  }
+
   async findByUserIdAndSkill(userId: string, skill: ProgrammingSkill): Promise<UserSkill | null> {
     const userSkill = await this.prisma.userSkill.findUnique({
       where: { userId_skill: { userId, skill } },
