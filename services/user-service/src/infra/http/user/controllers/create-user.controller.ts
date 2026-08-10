@@ -11,6 +11,7 @@ const createUserSchema = z.object({
   email: z.email(),
   password: z.string().min(8),
   userType: z.enum(['TALENT', 'RECRUITER']),
+  description: z.string().trim().min(1).max(1000).optional(),
 }).strict()
 
 export type CreateUserInput = z.infer<typeof createUserSchema>
