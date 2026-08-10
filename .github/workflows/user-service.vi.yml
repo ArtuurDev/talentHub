@@ -6,6 +6,10 @@ on:
     - main
     paths:
     - 'services/user-service/**'
+
+concurrency:
+  group: semantic-release-user-service-main
+  cancel-in-progress: false
     
 permissions:
   contents: write   
@@ -20,6 +24,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v5
+      with:
+        fetch-depth: 0
 
     - name: Setup Node
       uses: actions/setup-node@v4
