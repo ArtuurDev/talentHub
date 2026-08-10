@@ -9,6 +9,7 @@ import { UserSkillsRepository } from '../../../domain/application/repositories/u
 import { AddUserSkillUseCase } from '../../../domain/application/use-cases/add-user-skill.use-case'
 import { DeleteUserSkillUseCase } from '../../../domain/application/use-cases/delete-user-skill.use-case'
 import { UpdateUserSkillUseCase } from '../../../domain/application/use-cases/update-user-skill.use-case'
+import { ListUserSkillsUseCase } from '../../../domain/application/use-cases/list-user-skills.use-case'
 import { CryptographyModule } from '../../cryptography/cryptography.module'
 import { PrismaService } from '../../database/prisma/prisma.service'
 import { PrismaUserSkillsRepository } from '../../database/repositories/prisma-user-skills-repository'
@@ -21,6 +22,7 @@ import { GetUserProfileController } from './controllers/get-user-profile.control
 import { LoginUserController } from './controllers/login-user.controller'
 import { UpdateUserController } from './controllers/update-user.controller'
 import { UpdateUserSkillController } from './controllers/update-user-skill.controller'
+import { ListUserSkillsController } from './controllers/list-user-skills.controller'
 import { SessionsRepository } from '../../../domain/application/repositories/sessions-repository'
 import { PrismaSessionsRepository } from '../../database/repositories/prisma-sessions-repository'
 
@@ -35,6 +37,7 @@ import { PrismaSessionsRepository } from '../../database/repositories/prisma-ses
     AddUserSkillController,
     UpdateUserSkillController,
     DeleteUserSkillController,
+    ListUserSkillsController,
   ],
   providers: [
     PrismaService,
@@ -49,6 +52,7 @@ import { PrismaSessionsRepository } from '../../database/repositories/prisma-ses
     AddUserSkillUseCase,
     UpdateUserSkillUseCase,
     DeleteUserSkillUseCase,
+    ListUserSkillsUseCase,
   ],
 })
 export class UserModule {}
