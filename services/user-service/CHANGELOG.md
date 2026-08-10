@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/ArtuurDev/talentHub/compare/user-service-v0.4.0...user-service-v0.5.0) (2026-08-10)
+
+
+### Features
+
+* **user-service:** implementar busca das habilidades ([2de381b](https://github.com/ArtuurDev/talentHub/commit/2de381b350870142fd9a2407e724de4691fbfb81))
+
 # [0.4.0](https://github.com/ArtuurDev/talentHub/compare/user-service-v0.3.0...user-service-v0.4.0) (2026-08-10)
 
 
