@@ -1,3 +1,11 @@
+# [0.4.0](https://github.com/ArtuurDev/talentHub/compare/user-service-v0.3.0...user-service-v0.4.0) (2026-08-10)
+
+
+### Features
+
+* **user-service:** adicionar descrição ao perfil ([65d512e](https://github.com/ArtuurDev/talentHub/commit/65d512ecb3f4c33bea22ee49d6a49f424e39fb70))
+* **user-service:** adicionar habilidades de talentos ([92ebb33](https://github.com/ArtuurDev/talentHub/commit/92ebb3366993eecbb405ede5ee1b617f3d8081b8))
+
 # [0.3.0](https://github.com/ArtuurDev/talentHub/compare/user-service-v0.2.0...user-service-v0.3.0) (2026-08-10)
 
 
