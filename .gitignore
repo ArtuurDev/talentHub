@@ -4,6 +4,7 @@
 /services/user-service/node_modules
 /services/user-service/dist
 /services/user-service/.env
+/services/user-service/*.tsbuildinfo
 /services/user-service/node_modules
 /services/notification-service/node_modules
 /services/notification-service/dist

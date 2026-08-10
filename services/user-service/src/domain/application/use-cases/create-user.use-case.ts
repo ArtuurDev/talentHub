@@ -1,3 +1,4 @@
+import { Inject, Injectable } from '@nestjs/common'
 import { ConflictError } from "../../../core/errors/create-user.error"
 import { InvalidEmailError } from "../../../core/errors/invalid-email.error"
 import { HashGenerator } from '../../../cryptography/hash-generator'
@@ -15,6 +16,7 @@ export interface CreateUserUseCaseRequest {
 export type CreateUserUseCaseResponseError = ConflictError | InvalidEmailError 
 export type CreateUserUseCaseResponseSuccess = {message: string}
  
+@Injectable()
 export class CreateUserUseCase {
   constructor(
     private usersRepository: UsersRepository,

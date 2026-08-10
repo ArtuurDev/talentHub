@@ -1,3 +1,4 @@
+import { Inject, Injectable } from '@nestjs/common'
 import { ConflictError } from '../../../core/errors/create-user.error'
 import { InvalidEmailError } from '../../../core/errors/invalid-email.error'
 import { UserNotFoundError } from '../../../core/errors/user-not-found.error'
@@ -19,6 +20,7 @@ export type UpdateUserUseCaseResponse =
   | InvalidEmailError
   | UserNotFoundError
 
+@Injectable()
 export class UpdateUserUseCase {
   constructor(
     private usersRepository: UsersRepository,
