@@ -16,6 +16,7 @@ const updateUserBodySchema = z.object({
   email: z.email().optional(),
   password: z.string().min(8).optional(),
   userType: z.enum(['TALENT', 'RECRUITER']).optional(),
+  description: z.string().trim().min(1).max(1000).nullable().optional(),
 }).strict().refine(body => Object.values(body).some(value => value !== undefined), {
   message: 'Informe ao menos um campo para atualização',
 })
