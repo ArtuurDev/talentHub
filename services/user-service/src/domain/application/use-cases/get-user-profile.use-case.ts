@@ -12,6 +12,7 @@ export interface UserProfile {
   name: string
   email: string
   userType: string
+  description?: string | null
   createdAt: Date
   updatedAt?: Date | null
 }
@@ -32,6 +33,7 @@ export class GetUserProfileUseCase {
       name: user.name,
       email: user.email,
       userType: UserType[user.userType],
+      description: user.description,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }

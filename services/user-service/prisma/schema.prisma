@@ -12,16 +12,67 @@ enum UserType {
   RECRUITER
 }
 
+enum ProgrammingSkill {
+  JAVASCRIPT
+  TYPESCRIPT
+  PYTHON
+  JAVA
+  CSHARP
+  PHP
+  GO
+  RUST
+  KOTLIN
+  SQL
+  HTML
+  CSS
+  REACT
+  ANGULAR
+  VUE
+  NODEJS
+  NESTJS
+  SPRING
+  SOLID
+  DESIGN_PATTERNS
+  CLEAN_ARCHITECTURE
+  REST_API
+  GRAPHQL
+  GIT
+  DOCKER
+  KUBERNETES
+  AWS
+  CI_CD
+  UNIT_TESTING
+  INTEGRATION_TESTING
+  E2E_TESTING
+  TDD
+}
+
 model User {
   id        String   @id @default(uuid()) @db.Uuid
   name      String
   email     String   @unique
-  password  String
-  userType  UserType
-  createdAt DateTime @default(now())
-  updatedAt DateTime?
+  password    String
+  userType    UserType
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime?
+  skills      UserSkill[]
 
   @@map("users")
+}
+
+model UserSkill {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @db.Uuid
+  skill     ProgrammingSkill
+  createdAt DateTime         @default(now())
+  updatedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skill])
+  @@index([userId])
+  @@map("user_skills")
 }
 
 model Session {

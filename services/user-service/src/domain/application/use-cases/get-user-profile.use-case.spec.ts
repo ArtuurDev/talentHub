@@ -24,6 +24,7 @@ describe('GetUserProfileUseCase', () => {
       name: 'Jane Doe',
       email: 'jane@example.com',
       userType: 'TALENT',
+      description: null,
       createdAt,
       updatedAt: null,
     })

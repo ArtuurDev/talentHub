@@ -10,6 +10,7 @@ export interface CreateUserUseCaseRequest {
   email: string
   password: string
   userType: 'TALENT' | 'RECRUITER'
+  description?: string
   createdAt?: Date
 }
 
@@ -28,6 +29,7 @@ export class CreateUserUseCase {
     name,
     password,
     userType,
+    description,
     createdAt
   }: CreateUserUseCaseRequest): Promise<CreateUserUseCaseResponseError | CreateUserUseCaseResponseSuccess> {
     const user = await this.usersRepository.findByEmail(email)
@@ -42,6 +44,7 @@ export class CreateUserUseCase {
       name,
       password: passwordHash,
       userType: UserType[userType],
+      description,
       createdAt,
     })
 
