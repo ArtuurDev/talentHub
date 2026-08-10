@@ -16,6 +16,7 @@ export interface UserProps {
   email: string
   password: string
   userType: UserType
+  description?: string | null
 
   createdAt: Date
   updatedAt?: Date | null
@@ -42,6 +43,10 @@ export class User extends AggregateRoot<UserProps> {
     return this.props.userType
   }
 
+  get description() {
+    return this.props.description
+  }
+
   get createdAt() {
     return this.props.createdAt
   }
@@ -62,6 +67,7 @@ export class User extends AggregateRoot<UserProps> {
       ...props,
       email: email.value,
       createdAt: props.createdAt ?? new Date(),
+      description: props.description ?? null,
       updatedAt: props.updatedAt ?? null
     }, id)
 

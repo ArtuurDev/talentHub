@@ -10,6 +10,7 @@ export class PrismaUserMapper {
       email: user.email,
       password: user.password,
       userType: UserType[user.userType] as PrismaUserType,
+      description: user.description,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     }
@@ -22,6 +23,7 @@ export class PrismaUserMapper {
         email: user.email,
         password: user.password,
         userType: UserType[user.userType],
+        description: user.description,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },

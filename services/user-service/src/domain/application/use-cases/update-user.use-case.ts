@@ -12,6 +12,7 @@ export interface UpdateUserUseCaseRequest {
   email?: string
   password?: string
   userType?: 'TALENT' | 'RECRUITER'
+  description?: string | null
 }
 
 export type UpdateUserUseCaseResponse =
@@ -27,7 +28,7 @@ export class UpdateUserUseCase {
     private hashGenerator: HashGenerator,
   ) {}
 
-  async execute({ userId, name, email, password, userType }: UpdateUserUseCaseRequest): Promise<UpdateUserUseCaseResponse> {
+  async execute({ userId, name, email, password, userType, description }: UpdateUserUseCaseRequest): Promise<UpdateUserUseCaseResponse> {
     const user = await this.usersRepository.findById(userId)
 
     if (!user) {
@@ -42,6 +43,7 @@ export class UpdateUserUseCase {
       email: email ?? user.email,
       password: passwordHash,
       userType: userType ? UserType[userType] : user.userType,
+      description: description === undefined ? user.description : description,
       createdAt: user.createdAt,
       updatedAt: new Date(),
     }, user.id)
