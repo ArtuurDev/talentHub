@@ -24,6 +24,10 @@ export class InMemoryUserSkillsRepository implements UserSkillsRepository {
     return this.items.find((item) => item.id.toString() === id) ?? null
   }
 
+  async findManyByUserId(userId: string): Promise<UserSkill[]> {
+    return this.items.filter((item) => item.userId === userId)
+  }
+
   async findByUserIdAndSkill(userId: string, skill: ProgrammingSkill): Promise<UserSkill | null> {
     return this.items.find((item) => item.userId === userId && item.skill === skill) ?? null
   }

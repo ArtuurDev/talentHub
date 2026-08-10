@@ -5,5 +5,6 @@ export abstract class UserSkillsRepository {
   abstract update(userSkill: UserSkill): Promise<void>
   abstract delete(userSkill: UserSkill): Promise<void>
   abstract findById(id: string): Promise<UserSkill | null>
+  abstract findManyByUserId(userId: string): Promise<UserSkill[]>
   abstract findByUserIdAndSkill(userId: string, skill: ProgrammingSkill): Promise<UserSkill | null>
 }
