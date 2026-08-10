@@ -1,7 +1,4 @@
 import { Module } from '@nestjs/common'
-import { Encrypter } from '../../../cryptography/encrypter'
-import { HashComparer } from '../../../cryptography/hash-comparer'
-import { HashGenerator } from '../../../cryptography/hash-generator'
 import { UserRepository } from '../../../domain/application/repositories/users-repository'
 import { CreateUserUseCase } from '../../../domain/application/use-cases/create-user.use-case'
 import { DeleteUserUseCase } from '../../../domain/application/use-cases/delete-user.use-case'
@@ -16,6 +13,8 @@ import { DeleteUserController } from './controllers/delete-user.controller'
 import { GetUserProfileController } from './controllers/get-user-profile.controller'
 import { LoginUserController } from './controllers/login-user.controller'
 import { UpdateUserController } from './controllers/update-user.controller'
+import { SessionsRepository } from '../../../domain/application/repositories/sessions-repository'
+import { PrismaSessionsRepository } from '../../database/repositories/prisma-sessions-repository'
 
 @Module({
   imports: [CryptographyModule],
@@ -29,6 +28,7 @@ import { UpdateUserController } from './controllers/update-user.controller'
   providers: [
     PrismaService,
     { provide: UserRepository, useClass: PrismaUsersRepository },
+    {provide: SessionsRepository, useClass: PrismaSessionsRepository},
     CreateUserUseCase,
     GetUserProfileUseCase,
     LoginUserUseCase,
