@@ -1,3 +1,17 @@
+# [0.4.0](https://github.com/ArtuurDev/talentHub/compare/api-gateway-v0.3.0...api-gateway-v0.4.0) (2026-08-11)
+
+
+### Bug Fixes
+
+* **api-gateway:** declara axios no serviço correto ([0c78452](https://github.com/ArtuurDev/talentHub/commit/0c784527d6da4dceecddd10ab22610032435277d))
+* **user-service:** corrige contrato de cadastro e erro persistido ([73850d3](https://github.com/ArtuurDev/talentHub/commit/73850d369eeee282b012cf3b229866e05aa35391))
+
+
+### Features
+
+* **api-gateway:** protege rotas e propaga erros de serviços ([7104781](https://github.com/ArtuurDev/talentHub/commit/71047810591e5862c82370f38767f00fad7fa636))
+* **user-service:** implementa rotação segura de refresh token ([33dd4ab](https://github.com/ArtuurDev/talentHub/commit/33dd4ab767b192628fc2b18b0b0ffae363f54494))
+
 # [0.3.0](https://github.com/ArtuurDev/talentHub/compare/api-gateway-v0.2.0...api-gateway-v0.3.0) (2026-08-11)
 
 
