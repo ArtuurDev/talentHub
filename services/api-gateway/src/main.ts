@@ -3,6 +3,8 @@ import { AppModule } from "./app.module";
 import helmet from "helmet";
 import { ValidationPipe } from "@nestjs/common";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import cookieParser from "cookie-parser";
+import { ZodValidationPipe } from "nestjs-zod";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -58,13 +60,7 @@ async function bootstrap() {
       maxAge: 86400, // 24 hours
   })
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true
-    })
-  )
+  app.use(cookieParser())
 
   const config = new DocumentBuilder()
     .setTitle("API GATEWAY - TALENT HUB")
