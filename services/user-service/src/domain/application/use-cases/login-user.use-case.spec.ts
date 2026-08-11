@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { InvalidCredentialsError } from '../../../core/errors/invalid-credentials.error'
 import { User, UserType } from '../../enterprise/entities/user'
 import { FakeEncrypter } from '../../../test/cryptography/fake-encrypter'
@@ -7,13 +7,21 @@ import { InMemorySessionsRepository } from '../../../test/repositories/in-memory
 import { InMemoryUsersRepository } from '../../../test/repositories/in-memory-users-repository'
 import { LoginUserUseCase } from './login-user.use-case'
 
-describe('LoginUserUseCase', () => {
-  it('authenticates the user and creates an access token', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const encrypter = new FakeEncrypter()
-    const sessionsRepository = new InMemorySessionsRepository()
+let usersRepository: InMemoryUsersRepository
+let sessionsRepository: InMemorySessionsRepository
+let encrypter: FakeEncrypter
+let sut: LoginUserUseCase
+
+describe('Caso de uso: autenticar usuário', () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository()
+    sessionsRepository = new InMemorySessionsRepository()
     const hasher = new FakeHasher()
-    const sut = new LoginUserUseCase(usersRepository, hasher, encrypter, hasher, sessionsRepository)
+    encrypter = new FakeEncrypter()
+    sut = new LoginUserUseCase(usersRepository, hasher, encrypter, hasher, sessionsRepository)
+  })
+
+  it('autentica o usuário e cria um token de acesso', async () => {
     const user = User.create({
       name: 'Jane Doe',
       email: 'jane@example.com',
@@ -34,7 +42,8 @@ describe('LoginUserUseCase', () => {
         payload: {
           sub: user.id.toString(),
           email: 'jane@example.com',
-          userType: 'RECRUITER',
+          roles: ['RECRUITER'],
+          sessionId: expect.any(String),
           tokenType: 'access',
         },
         options: { expiresIn: '15m' },
@@ -42,12 +51,7 @@ describe('LoginUserUseCase', () => {
     ])
   })
 
-  it('returns an error and does not sign a token with invalid credentials', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const encrypter = new FakeEncrypter()
-    const hasher = new FakeHasher()
-    const sut = new LoginUserUseCase(usersRepository, hasher, encrypter, hasher, new InMemorySessionsRepository())
-
+  it('retorna erro e não assina token com credenciais inválidas', async () => {
     await expect(sut.execute({ email: 'missing@example.com', password: 'password' })).resolves.toBeInstanceOf(InvalidCredentialsError)
     expect(encrypter.calls).toHaveLength(0)
   })

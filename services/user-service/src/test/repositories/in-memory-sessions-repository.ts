@@ -20,6 +20,14 @@ export class InMemorySessionsRepository implements SessionsRepository {
     this.items = this.items.filter(item => !item.id.equals(session.id))
   }
 
+  async revokeManyByUser(userId: string): Promise<void> {
+    this.items
+      .filter(session => session.userId === userId)
+      .forEach(session => {
+        session.revoked = true
+      })
+  }
+
   async findById(id: string): Promise<UserSession | null> {
     return this.items.find(item => item.id.toString() === id) ?? null
   }

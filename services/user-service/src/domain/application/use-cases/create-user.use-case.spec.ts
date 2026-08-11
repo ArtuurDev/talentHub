@@ -5,18 +5,18 @@ import { FakeHasher } from '../../../test/cryptography/fake-hasher'
 import { InMemoryUsersRepository } from '../../../test/repositories/in-memory-users-repository'
 import { CreateUserUseCase } from './create-user.use-case'
 
-describe('CreateUserUseCase', () => {
-  let usersRepository: InMemoryUsersRepository
-  let hashGenerator: FakeHasher
-  let sut: CreateUserUseCase
+let usersRepository: InMemoryUsersRepository
+let hashGenerator: FakeHasher
+let sut: CreateUserUseCase
 
+describe('Caso de uso: criar usuário', () => {
   beforeEach(() => {
     usersRepository = new InMemoryUsersRepository()
     hashGenerator = new FakeHasher()
     sut = new CreateUserUseCase(usersRepository, hashGenerator)
   })
 
-  it('Deve ser possivel criar um usuário', async () => {
+  it('cria um usuário', async () => {
     const result = await sut.execute({
       name: 'user',
       email: 'user@example.com',
@@ -33,7 +33,7 @@ describe('CreateUserUseCase', () => {
     })
   })
 
-  it('Não deve ser possivel cadastrar usuário se E-mail for duplicado', async () => {
+  it('não permite cadastrar usuário com e-mail duplicado', async () => {
     await sut.execute({
       name: 'user',
       email: 'user@example.com',
@@ -52,7 +52,7 @@ describe('CreateUserUseCase', () => {
     expect(usersRepository.items).toHaveLength(1)
   })
 
-  it('Deve retornar InvalidEmailError ao criar usuário com email inválido', async () => {
+  it('retorna InvalidEmailError ao criar usuário com e-mail inválido', async () => {
     const result = await sut.execute({
       name: 'user',
       email: 'invalid-email',

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { ConflictError } from '../../../core/errors/create-user.error'
 import { UserIsNotTalentError } from '../../../core/errors/user-is-not-talent.error'
 import { UserNotFoundError } from '../../../core/errors/user-not-found.error'
@@ -8,11 +8,18 @@ import { InMemoryUserSkillsRepository } from '../../../test/repositories/in-memo
 import { InMemoryUsersRepository } from '../../../test/repositories/in-memory-users-repository'
 import { AddUserSkillUseCase } from './add-user-skill.use-case'
 
+let usersRepository: InMemoryUsersRepository
+let userSkillsRepository: InMemoryUserSkillsRepository
+let sut: AddUserSkillUseCase
+
 describe('Caso de uso: adicionar habilidade ao usuário', () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository()
+    userSkillsRepository = new InMemoryUserSkillsRepository()
+    sut = new AddUserSkillUseCase(usersRepository, userSkillsRepository)
+  })
+
   it('adiciona uma habilidade a um usuário do tipo TALENT', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const userSkillsRepository = new InMemoryUserSkillsRepository()
-    const sut = new AddUserSkillUseCase(usersRepository, userSkillsRepository)
     const user = User.create({
       name: 'Jane Doe',
       email: 'jane@example.com',
@@ -29,9 +36,6 @@ describe('Caso de uso: adicionar habilidade ao usuário', () => {
   })
 
   it('não adiciona uma habilidade duplicada', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const userSkillsRepository = new InMemoryUserSkillsRepository()
-    const sut = new AddUserSkillUseCase(usersRepository, userSkillsRepository)
     const user = User.create({ name: 'Jane Doe', email: 'jane@example.com', password: 'hash', userType: UserType.TALENT }) as User
     await usersRepository.create(user)
     await sut.execute({ userId: user.id.toString(), skill: ProgrammingSkill.TYPESCRIPT })
@@ -40,8 +44,6 @@ describe('Caso de uso: adicionar habilidade ao usuário', () => {
   })
 
   it('rejeita um recrutador e um usuário inexistente', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const sut = new AddUserSkillUseCase(usersRepository, new InMemoryUserSkillsRepository())
     const recruiter = User.create({ name: 'John Doe', email: 'john@example.com', password: 'hash', userType: UserType.RECRUITER }) as User
     await usersRepository.create(recruiter)
 

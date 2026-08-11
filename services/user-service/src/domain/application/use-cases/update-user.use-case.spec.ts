@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { ConflictError } from '../../../core/errors/create-user.error'
 import { InvalidEmailError } from '../../../core/errors/invalid-email.error'
 import { UserNotFoundError } from '../../../core/errors/user-not-found.error'
@@ -7,10 +7,16 @@ import { FakeHasher } from '../../../test/cryptography/fake-hasher'
 import { InMemoryUsersRepository } from '../../../test/repositories/in-memory-users-repository'
 import { UpdateUserUseCase } from './update-user.use-case'
 
-describe('UpdateUserUseCase', () => {
-  it('updates the supplied user fields and encrypts a new password', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const sut = new UpdateUserUseCase(usersRepository, new FakeHasher())
+let usersRepository: InMemoryUsersRepository
+let sut: UpdateUserUseCase
+
+describe('Caso de uso: atualizar usuário', () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository()
+    sut = new UpdateUserUseCase(usersRepository, new FakeHasher())
+  })
+
+  it('atualiza os campos informados e criptografa a nova senha', async () => {
     const user = User.create({
       name: 'Jane Doe',
       email: 'jane@example.com',
@@ -36,9 +42,7 @@ describe('UpdateUserUseCase', () => {
     expect(usersRepository.items[0].updatedAt).toBeInstanceOf(Date)
   })
 
-  it('does not update to an e-mail that belongs to another user', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const sut = new UpdateUserUseCase(usersRepository, new FakeHasher())
+  it('não atualiza para um e-mail que pertence a outro usuário', async () => {
     const user = User.create({
       name: 'Jane Doe',
       email: 'jane@example.com',
@@ -59,9 +63,7 @@ describe('UpdateUserUseCase', () => {
     expect(usersRepository.items[0].email).toBe('jane@example.com')
   })
 
-  it('returns an invalid e-mail error without updating the user', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const sut = new UpdateUserUseCase(usersRepository, new FakeHasher())
+  it('retorna erro de e-mail inválido sem atualizar o usuário', async () => {
     const user = User.create({
       name: 'Jane Doe',
       email: 'jane@example.com',
@@ -75,9 +77,7 @@ describe('UpdateUserUseCase', () => {
     expect(usersRepository.items[0].email).toBe('jane@example.com')
   })
 
-  it('returns an error when the user does not exist', async () => {
-    const sut = new UpdateUserUseCase(new InMemoryUsersRepository(), new FakeHasher())
-
+  it('retorna erro quando o usuário não existe', async () => {
     await expect(sut.execute({ userId: 'missing-user-id', name: 'Jane Doe' })).resolves.toBeInstanceOf(UserNotFoundError)
   })
 })

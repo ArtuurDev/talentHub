@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { ConflictError } from '../../../core/errors/create-user.error'
 import { UserIsNotTalentError } from '../../../core/errors/user-is-not-talent.error'
 import { UserSkillNotFoundError } from '../../../core/errors/user-skill-not-found.error'
@@ -8,11 +8,18 @@ import { InMemoryUserSkillsRepository } from '../../../test/repositories/in-memo
 import { InMemoryUsersRepository } from '../../../test/repositories/in-memory-users-repository'
 import { UpdateUserSkillUseCase } from './update-user-skill.use-case'
 
+let usersRepository: InMemoryUsersRepository
+let userSkillsRepository: InMemoryUserSkillsRepository
+let sut: UpdateUserSkillUseCase
+
 describe('Caso de uso: atualizar habilidade do usuário', () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository()
+    userSkillsRepository = new InMemoryUserSkillsRepository()
+    sut = new UpdateUserSkillUseCase(usersRepository, userSkillsRepository)
+  })
+
   it('atualiza uma habilidade pertencente a um usuário do tipo TALENT', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const userSkillsRepository = new InMemoryUserSkillsRepository()
-    const sut = new UpdateUserSkillUseCase(usersRepository, userSkillsRepository)
     const user = User.create({ name: 'Jane Doe', email: 'jane@example.com', password: 'hash', userType: UserType.TALENT }) as User
     const userSkill = UserSkill.create({ userId: user.id.toString(), skill: ProgrammingSkill.JAVASCRIPT })
     await usersRepository.create(user)
@@ -26,9 +33,6 @@ describe('Caso de uso: atualizar habilidade do usuário', () => {
   })
 
   it('rejeita uma atualização que duplicaria outra habilidade', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const userSkillsRepository = new InMemoryUserSkillsRepository()
-    const sut = new UpdateUserSkillUseCase(usersRepository, userSkillsRepository)
     const user = User.create({ name: 'Jane Doe', email: 'jane@example.com', password: 'hash', userType: UserType.TALENT }) as User
     const firstSkill = UserSkill.create({ userId: user.id.toString(), skill: ProgrammingSkill.JAVASCRIPT })
     const secondSkill = UserSkill.create({ userId: user.id.toString(), skill: ProgrammingSkill.TYPESCRIPT })
@@ -40,9 +44,6 @@ describe('Caso de uso: atualizar habilidade do usuário', () => {
   })
 
   it('rejeita habilidades que não pertencem ao usuário e recrutadores', async () => {
-    const usersRepository = new InMemoryUsersRepository()
-    const userSkillsRepository = new InMemoryUserSkillsRepository()
-    const sut = new UpdateUserSkillUseCase(usersRepository, userSkillsRepository)
     const talent = User.create({ name: 'Jane Doe', email: 'jane@example.com', password: 'hash', userType: UserType.TALENT }) as User
     const recruiter = User.create({ name: 'John Doe', email: 'john@example.com', password: 'hash', userType: UserType.RECRUITER }) as User
     const userSkill = UserSkill.create({ userId: talent.id.toString(), skill: ProgrammingSkill.JAVASCRIPT })
