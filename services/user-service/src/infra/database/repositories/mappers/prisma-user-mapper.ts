@@ -1,5 +1,6 @@
 import { User as PrismaUser, UserType as PrismaUserType } from '@prisma/client'
 import { UniqueEntityId } from '../../../../core/entities/unique-entity-id'
+import { PersistedUserInvalidEmailError } from '../../../../core/errors/persisted-user-invalid-email.error'
 import { User, UserType } from '../../../../domain/enterprise/entities/user'
 
 export class PrismaUserMapper {
@@ -31,7 +32,7 @@ export class PrismaUserMapper {
     )
 
     if (!(domainUser instanceof User)) {
-      throw new Error('Usuário persistido possui e-mail inválido')
+      throw new PersistedUserInvalidEmailError()
     }
 
     return domainUser

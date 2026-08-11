@@ -16,12 +16,12 @@ export class ListUserSkillsController {
   constructor(private readonly listUserSkillsUseCase: ListUserSkillsUseCase) {}
 
   @Get(':userId/skills')
-  @ApiOperation({ summary: 'Lista todas as habilidades de um usu\u00e1rio TALENT' })
+  @ApiOperation({ summary: 'Lista todas as habilidades de um usuário TALENT' })
   @ApiParam({ name: 'userId', format: 'uuid' })
   @ApiOkResponse({ description: 'Habilidades encontradas' })
-  @ApiBadRequestResponse({ description: 'Dados inv\u00e1lidos' })
-  @ApiForbiddenResponse({ description: 'O usu\u00e1rio n\u00e3o \u00e9 do tipo TALENT' })
-  @ApiNotFoundResponse({ description: 'Usu\u00e1rio n\u00e3o encontrado' })
+  @ApiBadRequestResponse({ description: 'Dados inválidos' })
+  @ApiForbiddenResponse({ description: 'O usuário não é do tipo TALENT' })
+  @ApiNotFoundResponse({ description: 'Usuário não encontrado' })
   async handle(@Param() params: ListUserSkillsParamsDto) {
     const result = await this.listUserSkillsUseCase.execute({ userId: params.userId })
 

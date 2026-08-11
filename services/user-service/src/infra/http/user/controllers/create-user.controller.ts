@@ -23,7 +23,7 @@ export class CreateUserDto extends createZodDto(createUserSchema) {}
 export class CreateUserController {
   constructor(private readonly createUserUseCase: CreateUserUseCase) {}
 
-  @Post()
+  @Post('register')
   @ApiOperation({ summary: 'Cria uma conta de usuário' })
   @ApiBody({ type: CreateUserDto })
   @ApiCreatedResponse({ description: 'Usuário criado com sucesso', schema: { example: { message: 'Usuário criado com sucesso' } } })
