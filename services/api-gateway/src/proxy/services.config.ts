@@ -1,6 +1,6 @@
 export const servicesConfig = {
   users: {
-    url: `http//:localhost:3001`,
+    url: `http://localhost:3001`,
     timeout: 10000
   },
   notifications: {
