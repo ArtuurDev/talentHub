@@ -6,7 +6,8 @@ export interface UserSessionProps {
   userId: string
   refreshToken: string
   createdAt: Date
-  expiresAt?: Date | null
+  expiresAt: Date
+  revoked: boolean
   lastAccessedAt?: Date | null
 }
 
@@ -31,19 +32,32 @@ export class UserSession extends AggregateRoot<UserSessionProps> {
     return this.props.expiresAt
   }
 
-  get lastAccessedAt() {
+  get revoked() {
+    return this.props.revoked
+  }
+
+  get lastAccessedAt(): null | undefined | Date {
     return this.props.lastAccessedAt
   }
 
+  set revoked(value: boolean) {
+    this.props.revoked = value
+    this.touch()
+  }
+
+  set lastAccessedAt(value: Date) {
+    this.props.lastAccessedAt = value
+    this.touch()
+  } 
+
   static create(
-    props: Optional<UserSessionProps, 'createdAt' | 'expiresAt' | 'lastAccessedAt'>,
+    props: Optional<UserSessionProps, 'createdAt' | 'lastAccessedAt' | 'lastAccessedAt'>,
     id?: UniqueEntityId,
   ): UserSession {
     const session = new UserSession(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
-        expiresAt: props.expiresAt ?? null,
         lastAccessedAt: props.lastAccessedAt ?? null,
       },
       id,

@@ -39,13 +39,6 @@ export class LoginUserUseCase {
       return new InvalidCredentialsError()
     }
 
-    const payload = {
-      sub: user.id.toString(),
-      email: user.email,
-      userType: UserType[user.userType],
-    }
-
-    const accessToken = await this.encrypter.encrypt({ ...payload, tokenType: 'access' }, { expiresIn: '15m' })
     const refreshToken = randomBytes(32).toString('base64url')
     const hashRefreshToken = await this.hashGenerator.hash(refreshToken)
 
@@ -58,8 +51,17 @@ export class LoginUserUseCase {
       refreshToken: hashRefreshToken,
       userId: user.id.toString(),
       createdAt: createdRefreshToken,
-      expiresAt: expiresAtRefresToken
+      expiresAt: expiresAtRefresToken,
+      revoked: false
     })
+
+    const payload = {
+      sub: user.id.toString(),
+      email: user.email,
+      roles: [UserType[user.userType]],
+      sessionId: userSession.id.toString()
+    }
+    const accessToken = await this.encrypter.encrypt({ ...payload, tokenType: 'access' }, { expiresIn: '15m' })
 
     await this.sessionRepository.create(userSession)
 
