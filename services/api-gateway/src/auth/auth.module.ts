@@ -8,7 +8,8 @@ import { AuthService } from './auth.service';
 import { ProxyModule } from '../proxy/proxy.module';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './strategies/jwt-strategy';
-import { JwtRefreshStrategy } from './strategies/jwt-refresh-strategy';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './guards/auth.guard';
 
 @Module({
   imports: [
@@ -26,7 +27,14 @@ import { JwtRefreshStrategy } from './strategies/jwt-refresh-strategy';
       }
     })
   ],
-  providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

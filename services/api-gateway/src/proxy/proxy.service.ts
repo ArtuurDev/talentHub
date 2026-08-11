@@ -1,11 +1,12 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { servicesConfig } from './services.config';
 import { firstValueFrom } from 'rxjs';
-
+import { AxiosError } from 'axios'
+  
 export interface UserInfo {
-  userId: string
-  sessionId: string
+  userId?: string
+  sessionId?: string
 }
 
 export interface ProxyRequestParams {
@@ -62,7 +63,7 @@ export class ProxyService {
       this.logger.error(
         `Error ao relizar requsição para o serviço ${serviceName} com o metodo ${method}`
       )
-      throw error
+      this.handleProxyError(error, serviceName)
     }
 
   }
@@ -81,6 +82,33 @@ export class ProxyService {
     } catch (error: any) {
       return { status: 'unhealthy', error: error.message }
     }
+  }
+
+  private handleProxyError(error: unknown, serviceName: string) {
+    if(error instanceof AxiosError) {
+      if(error.response) {
+        const status = error.response.status
+        const body = error.response.data
+
+        throw new HttpException(
+          body ?? {message: `Erro retornado pelo serviço de ${serviceName}`},
+          status
+        )
+      }
+
+      if(error.code === 'ECONNABORTED') {
+        throw new HttpException(
+          {message: `O serviço de ${serviceName} demorou pra responder`},
+          HttpStatus.GATEWAY_TIMEOUT
+        )
+      }
+    }
+
+    this.logger.error("Erro interno no gateway")
+    throw new HttpException(
+      { message: 'Erro interno no gateway' },
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    )
   }
 
 }

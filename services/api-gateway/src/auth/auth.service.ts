@@ -1,23 +1,25 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ProxyService } from '../proxy/proxy.service';
+import { IncomingHttpHeaders } from 'node:http';
 
-export interface AuthDataLogin {
+export interface AuthDataLoginParams {
   password: string
   email: string
+  sessionId?: string
+  headers?: IncomingHttpHeaders
+  method: string
+  path: string
 }
 
-export interface AuthLoginParams {
-  data: AuthDataLogin
-  headers: any
-}
-
-export interface AuthDataRegister extends AuthDataLogin {
+export interface AuthRegisterParams {
   name: string
+  password: string
+  email: string
   userType: string
-}
+  headers?: IncomingHttpHeaders
+  method: string
+  path: string
 
-export interface AuthRegisterParams extends Omit<AuthLoginParams, 'data'>{
-  data: AuthDataRegister
 }
 
 @Injectable()
@@ -25,57 +27,45 @@ export class AuthService {
   constructor(private proxyService: ProxyService) {}
 
   async login({
-    data,
+    email,
+    password,
     headers,
-  }: AuthLoginParams) {
+    method,
+    path,
+    sessionId
+  }: AuthDataLoginParams) {
 
-    const fields = {
-      ...data,
+    const response = await this.proxyService.proxyRequest({
+      userInfo: {sessionId},
+      data: {email, password},
+      method,
+      path,
       headers,
-      method: 'POST',
-      path: 'auth/login'
-    }
+      serviceName: 'users'
+    })
 
-    if(Object.values(fields).some(field => field === undefined)) {
-      throw new BadRequestException('Parametros incompletos')
-    }
-
-    try {
-      const response = await this.proxyService.proxyRequest({
-        ...fields,
-        serviceName: 'users'
-      })
-
-      return response
-    } catch(error) {
-      throw error
-    }
+    return response
   }
 
   async register({
-    data,
+    email,
+    name,
+    password,
+    userType,
     headers,
+    method,
+    path
   }: AuthRegisterParams) {
-      const fields = {
-      ...data,
+
+    const response = await this.proxyService.proxyRequest({
+      data: {email, name, userType, password},
+      method,
+      path,
       headers,
-      method: "POST",
-      path: 'auth/login'
-    }
+      serviceName: 'users'
+    })
 
-    if(Object.values(fields).some(field => field === undefined)) {
-      throw new BadRequestException('Parametros incompletos')
-    }
-
-    try {
-      const response = await this.proxyService.proxyRequest({
-        ...fields,
-        serviceName: 'users'
-      })
-      return response
-    } catch(error) {
-      throw error
-    }
+    return response
   }
 }
  

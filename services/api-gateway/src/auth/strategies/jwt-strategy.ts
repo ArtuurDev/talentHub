@@ -6,6 +6,8 @@ import { Env } from '../../env';
 
 interface UserPayload {
   sub: string
+  sessionId: string
+  roles: string[]
 }
 
 @Injectable()
@@ -20,9 +22,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       })
   }
 
-  async validate(payload: UserPayload): Promise<{id: string}> {
+  async validate(payload: UserPayload): Promise<{id: string, sessionId: string, roles: string[]}> {
     return { 
-      id: payload.sub
+      id: payload.sub,
+      sessionId: payload.sessionId,
+      roles: payload.roles
     }
   }
 }
