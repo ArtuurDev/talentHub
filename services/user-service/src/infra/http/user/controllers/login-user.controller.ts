@@ -29,7 +29,7 @@ export class LoginUserController {
     schema: { example: { accessToken: 'eyJ...' } },
   })
   @ApiUnauthorizedResponse({ description: 'E-mail ou senha inválidos' })
-  async handle(@Body() body: LoginUserDto, @Res({ passthrough: true }) response: Response) {
+  async handle(@Body() body: LoginUserDto) {
     const result = await this.loginUserUseCase.execute(body)
 
     if (result instanceof Error) {
@@ -42,15 +42,11 @@ export class LoginUserController {
           throw new BadRequestException(error.message)
       }
     }
-
-    response.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/users',
-    })
-
-    return { accessToken: result.accessToken }
+    
+    return {
+      accessToken: result.accessToken, 
+      refreshToken: result.refreshToken, 
+      sessionId: result.sessionId
+    }
   }
 }

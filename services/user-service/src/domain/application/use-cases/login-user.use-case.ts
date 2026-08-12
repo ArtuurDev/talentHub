@@ -14,7 +14,7 @@ export interface LoginUserUseCaseRequest {
   password: string
 }
 
-export type LoginUserUseCaseResponse = { accessToken: string; refreshToken: string } | InvalidCredentialsError
+export type LoginUserUseCaseResponse = { accessToken: string; refreshToken: string, sessionId: string } | InvalidCredentialsError
 
 @Injectable()
 export class LoginUserUseCase {
@@ -65,6 +65,6 @@ export class LoginUserUseCase {
 
     await this.sessionRepository.create(userSession)
 
-    return { accessToken, refreshToken }
+    return { accessToken, refreshToken, sessionId: userSession.id.toString() }
   }
 }
