@@ -19,7 +19,14 @@ export interface AuthRegisterParams {
   headers?: IncomingHttpHeaders
   method: string
   path: string
+}
 
+export interface ValidateSessionParams {
+  refreshToken: string
+  sessionId: string
+  method: string
+  path: string
+  headers?: IncomingHttpHeaders 
 }
 
 @Injectable()
@@ -42,6 +49,25 @@ export class AuthService {
       path,
       headers,
       serviceName: 'users'
+    })
+
+    return response
+  }
+
+  async validateSession({
+    method,
+    path,
+    refreshToken,
+    sessionId,
+    headers
+  }: ValidateSessionParams) {
+    const response = await this.proxyService.proxyRequest({
+      userInfo: {sessionId},
+      data: {refreshToken},
+      method,
+      path,
+      serviceName: 'users',
+      headers
     })
 
     return response

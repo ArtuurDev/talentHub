@@ -1,12 +1,14 @@
-import { Body, Controller, Headers, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Header, Headers, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import z from "zod/v3";
 import { ZodValidationPipe } from "../common/pipes/zod-validation.pipe";
 import type { IncomingHttpHeaders } from "node:http";
 import { Public } from '../common/decorators/public';
-import type { Response } from "express";
+import type { Request, Response } from "express";
 import { ConfigService } from "@nestjs/config";
 import { Env } from "../env";
+import { User } from "../common/decorators/user";
+import { SessionGuard } from "./guards/session.guard";
 
 export const loginSchema = z.object({
   password: z.string(),
@@ -45,13 +47,57 @@ export class AuthController{
     })
 
     const sevenDaysInMilisseconds = 604800000
-    response.cookie('refreshToken', result?.data.refreshToken, {
+    response.cookie('x-refresh-token', result?.data.refreshToken, {
       httpOnly: true,
       secure: this.configService.get("NODE_ENV") === 'production',
       sameSite: 'strict',
       maxAge: sevenDaysInMilisseconds
     })
+
+    response.cookie('x-session-id', result?.data.sessionId, {
+      httpOnly: true,
+      secure: this.configService.get("NODE_ENV") === 'production',
+      sameSite: 'strict',
+      maxAge: sevenDaysInMilisseconds
+    })
+
+    return result
   }
+
+  @Post('session')
+  @Public()
+  @UseGuards(SessionGuard)
+  async validateSession(
+    @Req() req: Request, 
+    @Res({passthrough: true}) response: Response, 
+    @Headers() headers: IncomingHttpHeaders) {
+      const result = await this.authService.validateSession({
+        method: 'POST',
+        path:  'users/session',
+        refreshToken: req.cookies['x-refresh-token'],
+        sessionId: req.cookies['x-session-id'],
+        headers: headers
+      })
+
+      const sevenDaysInMilisseconds = 604800000
+      response.cookie('x-refresh-token', result?.data.refreshToken, {
+        httpOnly: true,
+        secure: this.configService.get("NODE_ENV") === 'production',
+        sameSite: 'strict',
+        maxAge: sevenDaysInMilisseconds
+      })
+
+      response.cookie('x-session-id', result?.data.sessionId, {
+        httpOnly: true,
+        secure: this.configService.get("NODE_ENV") === 'production',
+        sameSite: 'strict',
+        maxAge: sevenDaysInMilisseconds
+      })
+
+      return {
+        accessToken: result?.data.accessToken
+      }
+    }
 
   @Post('register')
   @Public()
