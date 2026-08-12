@@ -29,7 +29,7 @@ export class LoginUserController {
     schema: { example: { accessToken: 'eyJ...' } },
   })
   @ApiUnauthorizedResponse({ description: 'E-mail ou senha inválidos' })
-  async handle(@Body() body: LoginUserDto, @Res({ passthrough: true }) response: Response) {
+  async handle(@Body() body: LoginUserDto) {
     const result = await this.loginUserUseCase.execute(body)
 
     if (result instanceof Error) {
@@ -43,6 +43,10 @@ export class LoginUserController {
       }
     }
     
-    return { accessToken: result.accessToken, refreshToken: result.refreshToken }
+    return {
+      accessToken: result.accessToken, 
+      refreshToken: result.refreshToken, 
+      sessionId: result.sessionId
+    }
   }
 }
