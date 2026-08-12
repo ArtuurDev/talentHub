@@ -7,7 +7,6 @@ import { Public } from '../common/decorators/public';
 import type { Request, Response } from "express";
 import { ConfigService } from "@nestjs/config";
 import { Env } from "../env";
-import { User } from "../common/decorators/user";
 import { SessionGuard } from "./guards/session.guard";
 
 export const loginSchema = z.object({
