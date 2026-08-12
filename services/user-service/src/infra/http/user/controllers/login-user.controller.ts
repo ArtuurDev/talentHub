@@ -42,15 +42,7 @@ export class LoginUserController {
           throw new BadRequestException(error.message)
       }
     }
-
-    response.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/users',
-    })
-
-    return { accessToken: result.accessToken }
+    
+    return { accessToken: result.accessToken, refreshToken: result.refreshToken }
   }
 }
