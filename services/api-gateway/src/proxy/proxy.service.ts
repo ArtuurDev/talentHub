@@ -1,8 +1,8 @@
 import { HttpService } from '@nestjs/axios';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { servicesConfig } from './services.config';
 import { firstValueFrom } from 'rxjs';
-import { AxiosError } from 'axios'
+import { CircuitBreakerService } from '../common/circuit-breaker/circuit-breaker.service';
   
 export interface UserInfo {
   userId?: string
@@ -24,7 +24,8 @@ export class ProxyService {
   private readonly logger = new Logger(ProxyService.name)
 
   constructor(
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    private readonly circuitBreakerService: CircuitBreakerService
   ) { }
 
   async proxyRequest({
@@ -35,80 +36,52 @@ export class ProxyService {
     userInfo,
     method
   }: ProxyRequestParams) {
+    this.logger.log(`Realizando requisição no metodo ${method} para o serviço ${servicesConfig}`)
+
+    return this.circuitBreakerService.executeWithCircuitBreaker(
+      () => this.handleRequest({
+        method,
+        path,
+        serviceName,
+        data,
+        headers,
+        userInfo
+      }),
+      `proxy-${serviceName}`,
+      {failureThreshold: 3, resetTimeout: 60000, timeout: 30000},
+      () => {
+        throw new Error(`${serviceName} está temporarimente indisponivel`)
+      }
+    )
+  }
+
+   private async handleRequest({
+    path,
+    serviceName,
+    data,
+    headers,
+    userInfo,
+    method
+  }: ProxyRequestParams)  {
     const service = servicesConfig[serviceName]
     const url = `${service.url}/${path}`
 
-    this.logger.log(`Realizando requisição no metodo ${method} para o serviço ${servicesConfig}`)
-
-    try {
-      const finalHeaders = {
+    const finalHeaders = {
         ...headers,
         'x-user-id': userInfo ? userInfo.userId : null,
         'x-session-id': userInfo ? userInfo.sessionId : null,
       }
 
-      const response = await firstValueFrom(
-        this.httpService.request({
-          method: method.toLowerCase(),
-          url,
-          data,
-          headers: { ...finalHeaders },
-          timeout: service.timeout
-        })
-      )
-
-      return response
-
-    } catch (error) {
-      this.logger.error(
-        `Error ao relizar requsição para o serviço ${serviceName} com o metodo ${method}`
-      )
-      this.handleProxyError(error, serviceName)
-    }
-
-  }
-
-  async getServiceHealth(serviceName: keyof typeof servicesConfig) {
-    try {
-      const service = servicesConfig[serviceName]
-
-      const response = await firstValueFrom(
-        this.httpService.get(`${service.url}/health`, {
-          timeout: 3000,
-        }),
-      );
-
-      return { status: 'healthy', data: response.data }
-    } catch (error: any) {
-      return { status: 'unhealthy', error: error.message }
-    }
-  }
-
-  private handleProxyError(error: unknown, serviceName: string) {
-    if(error instanceof AxiosError) {
-      if(error.response) {
-        const status = error.response.status
-        const body = error.response.data
-
-        throw new HttpException(
-          body ?? {message: `Erro retornado pelo serviço de ${serviceName}`},
-          status
-        )
-      }
-
-      if(error.code === 'ECONNABORTED') {
-        throw new HttpException(
-          {message: `O serviço de ${serviceName} demorou pra responder`},
-          HttpStatus.GATEWAY_TIMEOUT
-        )
-      }
-    }
-
-    this.logger.error("Erro interno no gateway")
-    throw new HttpException(
-      { message: 'Erro interno no gateway' },
-      HttpStatus.INTERNAL_SERVER_ERROR,
+    const response = await firstValueFrom(
+      this.httpService.request({
+        method: method.toLowerCase(),
+        url,
+        data,
+        headers: { ...finalHeaders },
+        timeout: service.timeout
+      })
     )
+    return response
   }
 
 }
