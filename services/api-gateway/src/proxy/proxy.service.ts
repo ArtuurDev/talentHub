@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { servicesConfig } from './services.config';
 import { firstValueFrom } from 'rxjs';
 import { CircuitBreakerService } from '../common/circuit-breaker/circuit-breaker.service';
+import { RetryService } from '../common/retry/retry.service';
   
 export interface UserInfo {
   userId?: string
@@ -25,7 +26,8 @@ export class ProxyService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly circuitBreakerService: CircuitBreakerService
+    private readonly circuitBreakerService: CircuitBreakerService,
+    private readonly retryService: RetryService,
   ) { }
 
   async proxyRequest({
@@ -39,14 +41,18 @@ export class ProxyService {
     this.logger.log(`Realizando requisição no metodo ${method} para o serviço ${servicesConfig}`)
 
     return this.circuitBreakerService.executeWithCircuitBreaker(
-      () => this.handleRequest({
-        method,
-        path,
-        serviceName,
-        data,
-        headers,
-        userInfo
-      }),
+
+      async () => this.retryService.executeWithExponentialBackoff(
+          
+        async () => this.handleRequest({
+          method,
+          path,
+          serviceName,
+          data,
+          headers,
+          userInfo
+        })
+      ),
       `proxy-${serviceName}`,
       {failureThreshold: 3, resetTimeout: 60000, timeout: 30000},
       () => {
