@@ -80,8 +80,9 @@ model Session {
   userId         String   @db.Uuid
   refreshToken   String   @unique
   createdAt      DateTime @default(now())
-  expiresAt      DateTime?
+  expiresAt      DateTime 
   lastAccessedAt DateTime?
+  revoked  Boolean
 
   @@map("sessions")
 }
