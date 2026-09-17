@@ -11,5 +11,26 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: nestjs_rabbitmq
+    restart: always
+    ports:
+      # Porta do protocolo AMQP (usada pela sua API NestJS para conectar)
+      - "5672:5672"
+      # Porta do Painel de Gerenciamento Web (Dashboard)
+      - "15672:15672"
+    environment:
+      # Configuração do usuário administrador e senha
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      # Mantém as filas, exchanges e mensagens salvas no seu HD
+      - rabbitmq_data:/var/lib/rabbitmq
+      # Mantém os logs do RabbitMQ salvos localmente
+      - rabbitmq_logs:/var/log/rabbitmq
+
 volumes:
   postgres_data:
+  rabbitmq_data:
+  rabbitmq_logs:
