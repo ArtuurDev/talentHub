@@ -35,7 +35,7 @@ import { envSchema } from "./env";
   ]),
     ProxyModule,
     MiddlewareModule,
-    AuthModule
+    AuthModule,
   ]
 })
 export class AppModule implements NestModule {

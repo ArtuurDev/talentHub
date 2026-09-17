@@ -21,9 +21,7 @@ export type AddUserSkillUseCaseResponse =
 @Injectable()
 export class AddUserSkillUseCase {
   constructor(
-    @Inject(UsersRepository)
     private readonly usersRepository: UsersRepository,
-    @Inject(UserSkillsRepository)
     private readonly userSkillsRepository: UserSkillsRepository,
   ) {}
 

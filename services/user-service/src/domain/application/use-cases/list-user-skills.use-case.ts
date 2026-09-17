@@ -22,9 +22,7 @@ export type ListUserSkillsUseCaseResponse = UserSkillOutput[] | UserNotFoundErro
 @Injectable()
 export class ListUserSkillsUseCase {
   constructor(
-    @Inject(UsersRepository)
     private readonly usersRepository: UsersRepository,
-    @Inject(UserSkillsRepository)
     private readonly userSkillsRepository: UserSkillsRepository,
   ) {}
 

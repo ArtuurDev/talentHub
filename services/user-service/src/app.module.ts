@@ -4,6 +4,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { envSchema } from './env/env';
 import { UserModule } from './infra/http/user/user.module';
 import { ZodValidationPipe } from './infra/http/pipes/zod-validation.pipe';
+import { HttpModule } from './infra/http/http.module';
 
 
 @Module({
@@ -12,7 +13,7 @@ import { ZodValidationPipe } from './infra/http/pipes/zod-validation.pipe';
       isGlobal: true,
       validate: (config) => envSchema.parse(config),
     }),
-    UserModule,
+    HttpModule,
   ],
   controllers: [],
   providers: [
